@@ -1,0 +1,35 @@
+.grid-container {
+  margin: 1em;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+
+.search {
+  flex-grow: 1;
+  max-height: 120px;
+}
+
+.search-full-width {
+  width: 100%;
+}
+.search-button-row{
+  display: flex;
+  justify-content: center;
+}
+.json {
+  flex-grow: 5;
+}
+.json, .search {
+  padding: 1em;
+  border: 1px #ccc;
+  border-radius: 3px;
+  background: #fff;
+
+  box-shadow: 0 2px 1px -1px #0003, 0 1px 1px #00000024, 0 1px 3px #0000001f;
+
+}
+

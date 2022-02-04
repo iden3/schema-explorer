@@ -1,0 +1,44 @@
+<section class="loading" *ngIf="loadingService.loading$ | async">
+  <mat-progress-bar
+    class="example-margin"
+    color="primary"
+    mode="indeterminate">
+  </mat-progress-bar>
+</section>
+<mat-sidenav-container fullscreen>
+  <mat-sidenav #sidenav
+    mode="side"
+    [(opened)]="opened">
+    <mat-list>
+      <mat-list-item>
+        <h2 matLine> Schema Uploader</h2>
+        <button mat-icon-button
+          (click)="opened = !opened">
+          <mat-icon>menu</mat-icon>
+        </button>
+      </mat-list-item>
+    </mat-list>
+    <mat-nav-list>
+      <mat-list-item [routerLink]="['/search']">
+        <a matLine>Search</a>
+        <button mat-icon-button>
+          <mat-icon>search</mat-icon>
+        </button>
+
+      </mat-list-item>
+      <mat-list-item [routerLink]="['/upload']">
+        <a matLine>Upload</a>
+        <button mat-icon-button>
+          <mat-icon>file_upload</mat-icon>
+        </button>
+      </mat-list-item>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+
+
+
