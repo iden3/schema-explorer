@@ -8,7 +8,7 @@ import {
 import {Observable, of} from 'rxjs';
 import {catchError, map} from 'rxjs/operators'
 import {LoadingService} from "./loading.service";
-import {MatSnackBar} from "@angular/material/snack-bar";
+import {MatSnackBar, MatSnackBarConfig} from "@angular/material/snack-bar";
 
 
 /**
@@ -39,7 +39,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
           return evt;
         }),
         catchError((err) => {
-          this.snackBar.open('Error occurred, try again later')
+          this.snackBar.open('Error occurred, try again later', '', { duration: 2000} as MatSnackBarConfig)
           console.log(err)
           this.loadingService.setLoading(false);
           return of(err);
