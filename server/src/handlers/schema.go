@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"encoding/json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/iden3/go-schema-processor/src/common"
 	"github.com/iden3/go-schema-registry-wrapper/wrapper"
@@ -75,7 +76,14 @@ func SaveSchema(c *fiber.Ctx) error {
 
 	c.Accepts("application/json")
 	c.Status(200)
-	_, err = c.Write([]byte(tx.Hash().Hex()))
+	r := make(map[string]string)
+	r["txHex"] = tx.Hash().Hex()
+	b, err := json.Marshal(r)
+
+	if err != nil {
+		return err
+	}
+	_, err = c.Write(b)
 
 	if err != nil {
 		return err
