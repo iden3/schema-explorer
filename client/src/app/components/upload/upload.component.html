@@ -14,7 +14,7 @@
         <mat-card-content class="dashboard-card-content">
           <div class="center">
             <ngx-file-drop dropZoneLabel="Drop files here" (onFileDrop)="dropped($event)"
-                           accept=".json"
+                           accept=".json,.json-ld"
                            (onFileOver)="fileOver($event)" (onFileLeave)="fileLeave($event)">
               <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
                 <button mat-stroked-button  type="button" (click)="openFileSelector()">Browse Files</button>

@@ -1,7 +1,7 @@
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { BehaviorSubject, take, tap } from 'rxjs';
+import { BehaviorSubject, filter, take, tap } from 'rxjs';
 import { SchemaService } from '../../services/schema.service';
 
 
@@ -32,7 +32,7 @@ export class SearchComponent implements OnInit {
       .getSchemaByName(this.searchControl.value)
       .pipe(
         take(1),
-        tap(d => this.jsonArrived.next(d))
+        tap(d => !!d ? this.jsonArrived.next(d) : this.snackBar.open('schema not found'))
       ).subscribe();
   }
 
