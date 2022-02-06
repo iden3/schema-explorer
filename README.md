@@ -1,4 +1,4 @@
-# SchemaUploader 
+# Schema explorer 
 
 ## Client
 
