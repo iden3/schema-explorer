@@ -17,13 +17,14 @@ import {MatInputModule} from '@angular/material/input';
 
 import {SearchComponent} from './components/search/search.component';
 import {UploadComponent} from './components/upload/upload.component';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NgxFileDropModule} from "ngx-file-drop";
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {PrettyJsonModule} from "angular2-prettyjson";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {HttpRequestInterceptor} from "./services/http.interceptor";
+import { MatRadioModule } from '@angular/material/radio';
 
 
 @NgModule({
@@ -37,12 +38,14 @@ import {HttpRequestInterceptor} from "./services/http.interceptor";
     BrowserModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
+    FormsModule,
     HttpClientModule,
     PrettyJsonModule,
     AppRoutingModule,
     MatGridListModule,
     MatProgressBarModule,
     MatCardModule,
+    MatRadioModule,
     MatMenuModule,
     MatIconModule,
     MatButtonModule,
@@ -51,7 +54,7 @@ import {HttpRequestInterceptor} from "./services/http.interceptor";
     MatInputModule,
     MatSnackBarModule,
     NgxFileDropModule,
-    LayoutModule
+    LayoutModule,
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true}],
   bootstrap: [AppComponent]

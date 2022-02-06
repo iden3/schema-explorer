@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"encoding/hex"
 	"encoding/json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/iden3/go-schema-processor/src/common"
@@ -19,11 +20,27 @@ var contractAddress = os.Getenv("CONTRACT_ADDRESS")
 var pKeyHex = os.Getenv("PRIVATE_KEY_HEX")
 
 func SearchByName(c *fiber.Ctx) error {
-	name := c.Params("name")
-	if name == "" {
+	value := c.Params("value")
+	getHash := c.Query("hash")
+	searchBy := c.Query("searchBy")
+	if value == "" {
 		return errorNameRequired
 	}
-	payload, err := wrapper.EncodeSchemaBytesByName(name)
+	var payload []byte
+	var err error
+
+	if getHash == "true" {
+		payload, err = wrapper.EncodeSchemaHashByName(value)
+	} else if searchBy == "hash" {
+		_, err := hex.DecodeString(value)
+		if err != nil {
+			return err
+		}
+		
+		payload, err = wrapper.EncodeSchemaBytesByHash(value)
+	} else {
+		payload, err = wrapper.EncodeSchemaBytesByName(value)
+	}
 	if err != nil {
 		return err
 	}
@@ -31,7 +48,47 @@ func SearchByName(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	d, err := wrapper.DecodeSchemaBytesByHash(b)
+
+	if getHash == "true" {
+		hash, err := wrapper.DecodeSchemaHashByName(b)
+
+		if err != nil {
+			return err
+		}
+		resp := make(map[string]interface{})
+		resp["hash"] = hash.Hex()
+
+		c.Accepts("application/json")
+		c.Status(200)
+		b, err := json.Marshal(resp)
+		_, err = c.Write(b)
+		if err != nil {
+			return err
+		}
+
+		return nil
+
+	}
+
+	if searchBy == "hash" {
+		b, err := wrapper.DecodeSchemaBytesByHash(b)
+
+		if err != nil {
+			return err
+		}
+
+		c.Accepts("application/json")
+		c.Status(200)
+		_, err = c.Write(b)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}
+
+	d, err := wrapper.DecodeSchemaBytesByName(b)
+
 	if err != nil {
 		return err
 	}

@@ -12,6 +12,7 @@ import { SchemaService } from '../../services/schema.service';
 export class SearchComponent implements OnInit {
 
   searchControl = new FormControl('', [Validators.required]);
+  searchParams: string = 'searchBy=name';
 
   private jsonArrived = new BehaviorSubject<unknown>(null);
 
@@ -28,8 +29,13 @@ export class SearchComponent implements OnInit {
       return;
     }
 
+    if (this.searchParams === 'searchBy=hash' && !(this.searchControl.value as string).startsWith('0x')) {
+      this.openSnack('Value is not valid hex string');
+      return
+    }
+
     this.schemaService
-      .getSchemaByName(this.searchControl.value)
+      .getSchemaByName(this.searchControl.value, this.searchParams)
       .pipe(
         take(1),
         tap(d => !!d ? this.jsonArrived.next(d) : this.snackBar.open('schema not found'))
