@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"bytes"
-	"encoding/hex"
 	"encoding/json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/iden3/go-schema-processor/src/common"
@@ -11,9 +10,11 @@ import (
 	"io"
 	"mime/multipart"
 	"os"
+	"strings"
 )
 
 var errorNameRequired = errors.New("name parameter required")
+var errorHotHex = errors.New("provide valid hex string in '0x..' format")
 
 var rpcURL = os.Getenv("RPC_URL")
 var contractAddress = os.Getenv("CONTRACT_ADDRESS")
@@ -32,11 +33,11 @@ func SearchByName(c *fiber.Ctx) error {
 	if getHash == "true" {
 		payload, err = wrapper.EncodeSchemaHashByName(value)
 	} else if searchBy == "hash" {
-		_, err := hex.DecodeString(value)
-		if err != nil {
-			return err
+		isHex := strings.HasPrefix(value, "0x")
+		if !isHex {
+			return errorHotHex
 		}
-		
+
 		payload, err = wrapper.EncodeSchemaBytesByHash(value)
 	} else {
 		payload, err = wrapper.EncodeSchemaBytesByName(value)
