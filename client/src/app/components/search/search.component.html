@@ -4,31 +4,33 @@
     <div class="search">
       <form class="search-form">
         <mat-form-field class="search-full-width"
-          appearance="outline">
+                        appearance="outline">
           <mat-label>Schema Name</mat-label>
           <input matInput
-            [formControl]="searchControl">
+                 [formControl]="searchControl">
         </mat-form-field>
       </form>
       <mat-radio-group aria-label="Select an option"
-        [(ngModel)]="searchParams">
+                       [(ngModel)]="searchParams">
         <mat-radio-button
-          value="searchBy=name">Search by name</mat-radio-button>
-        <mat-radio-button value="searchBy=hash">Search by hash</mat-radio-button>
-        <mat-radio-button value="hash=true">Get hash by name</mat-radio-button>
+          [value]="constants.SEARCH_BY_NAME">Search by name
+        </mat-radio-button>
+        <mat-radio-button [value]="constants.SEARCH_BY_HASH">Search by hash</mat-radio-button>
+        <mat-radio-button [value]="constants.GET_HASH">Get hash by name</mat-radio-button>
       </mat-radio-group>
       <div class="search-button-row">
         <button mat-stroked-button
-          type="button"
-          (click)="searchSchema()">Search</button>
-        </div>
+                type="button"
+                (click)="searchSchema()">Search
+        </button>
+      </div>
     </div>
 
     <div class="json">
       <header>
         <h3>Json
           <button mat-icon-button
-            (click)="copy()">
+                  (click)="copy()">
             <mat-icon>content_copy</mat-icon>
           </button>
         </h3>
@@ -36,7 +38,7 @@
       </header>
       <div>
         <pre *ngIf="(jsonArrived$ | async)  as data"
-          [innerHTML]=" data| prettyjson:3"></pre>
+             [innerHTML]=" data| prettyjson:3"></pre>
       </div>
     </div>
   </div>

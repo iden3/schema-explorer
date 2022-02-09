@@ -20,7 +20,7 @@ var rpcURL = os.Getenv("RPC_URL")
 var contractAddress = os.Getenv("CONTRACT_ADDRESS")
 var pKeyHex = os.Getenv("PRIVATE_KEY_HEX")
 
-func SearchByName(c *fiber.Ctx) error {
+func Search(c *fiber.Ctx) error {
 	value := c.Params("value")
 	getHash := c.Query("hash")
 	searchBy := c.Query("searchBy")

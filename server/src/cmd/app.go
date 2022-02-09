@@ -9,7 +9,7 @@ import (
 func main() {
 	app := fiber.New()
 
-	app.Get("api/schema/search/:value", handlers.SearchByName)
+	app.Get("api/schema/search/:value", handlers.Search)
 	app.Post("api/schema/save", handlers.SaveSchema)
 
 	err := app.Listen(":3000")

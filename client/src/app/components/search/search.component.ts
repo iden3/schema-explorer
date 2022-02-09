@@ -1,9 +1,10 @@
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Component, OnInit } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
-import { BehaviorSubject, filter, take, tap } from 'rxjs';
-import { SchemaService } from '../../services/schema.service';
-
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {Component, Inject, OnInit} from '@angular/core';
+import {FormControl, Validators} from '@angular/forms';
+import {BehaviorSubject, take, tap} from 'rxjs';
+import {CONSTANTS} from "../../utils/constants";
+import {SCHEMA_SERVICE} from "../../app.module";
+import {AbstractSchemaService} from "../../services/abstract-schema.service";
 
 @Component({
   templateUrl: './search.component.html',
@@ -11,6 +12,7 @@ import { SchemaService } from '../../services/schema.service';
 })
 export class SearchComponent implements OnInit {
 
+  constants = CONSTANTS;
   searchControl = new FormControl('', [Validators.required]);
   searchParams: string = 'searchBy=name';
 
@@ -18,7 +20,8 @@ export class SearchComponent implements OnInit {
 
   jsonArrived$ = this.jsonArrived.asObservable();
 
-  constructor(private snackBar: MatSnackBar, private schemaService: SchemaService) {
+  constructor(private snackBar: MatSnackBar,
+               @Inject(SCHEMA_SERVICE) private schemaService: AbstractSchemaService) {
   }
 
   ngOnInit(): void {
@@ -35,7 +38,7 @@ export class SearchComponent implements OnInit {
     }
 
     this.schemaService
-      .getSchemaByName(this.searchControl.value, this.searchParams)
+      .search(this.searchControl.value, this.searchParams)
       .pipe(
         take(1),
         tap(d => !!d ? this.jsonArrived.next(d) : this.snackBar.open('schema not found'))
@@ -46,14 +49,14 @@ export class SearchComponent implements OnInit {
     this.jsonArrived$.pipe(
       take(1),
       tap(d => {
-        const data = [new ClipboardItem({ 'text/plain': new Blob([JSON.stringify(d)], { type: 'text/plain' }) })];
+        const data = [new ClipboardItem({'text/plain': new Blob([JSON.stringify(d)], {type: 'text/plain'})})];
         navigator.clipboard.write(data).then(() => this.openSnack('Copied to clipboard'), () => this.openSnack('Unable to write to clipboard.'));
       })
     ).subscribe()
   }
 
   openSnack(msg: string) {
-    this.snackBar.open(msg, '', { duration: 2000 })
+    this.snackBar.open(msg, '', {duration: 2000})
   }
 
 }

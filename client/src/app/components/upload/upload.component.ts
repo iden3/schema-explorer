@@ -1,7 +1,9 @@
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Component } from '@angular/core';
-import { NgxFileDropEntry } from "ngx-file-drop";
-import { HttpClient } from "@angular/common/http";
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {Component, Inject} from '@angular/core';
+import {NgxFileDropEntry} from "ngx-file-drop";
+import {SCHEMA_SERVICE} from "../../app.module";
+import {AbstractSchemaService} from "../../services/abstract-schema.service";
+
 
 @Component({
   templateUrl: './upload.component.html',
@@ -10,8 +12,10 @@ import { HttpClient } from "@angular/common/http";
 export class UploadComponent {
 
 
-  constructor(private http: HttpClient, private snackBar: MatSnackBar) {
+  constructor(@Inject(SCHEMA_SERVICE) private schemaService: AbstractSchemaService,
+              private snackBar: MatSnackBar) {
   }
+
   public files: NgxFileDropEntry[] = [];
 
   public dropped(files: NgxFileDropEntry[]) {
@@ -20,22 +24,22 @@ export class UploadComponent {
 
       if (droppedFile.fileEntry.isFile) {
         const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
-        fileEntry.file((file: File) => {
+        fileEntry.file(async (file: File) => {
           const formData = new FormData();
           formData.append('json', file, droppedFile.relativePath);
 
-          this.http.post<any>('/api/schema/save', formData)
+          this.schemaService.uploadSchema(file, droppedFile.relativePath)
             .subscribe(d => {
               if (!!d) {
-                this.snackBar.open(`Schema uploaded successfully tx_id: ${d?.txHex}`, '', { duration: 2000 })
+                this.snackBar.open(`Schema uploaded successfully tx_id: ${d?.txHex}`, '', {duration: 2000})
               }
               console.log(d)
             });
-
         });
       } else {
-        const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
-        console.log(droppedFile.relativePath, fileEntry);
+        // const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
+        // console.log(droppedFile.relativePath, fileEntry);
+        this.snackBar.open(`Please provide valid json-ld file`, '', {duration: 2000})
       }
     }
   }
