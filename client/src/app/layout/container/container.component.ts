@@ -1,6 +1,4 @@
 import {Component} from '@angular/core';
-import {map} from 'rxjs/operators';
-import {Breakpoints, BreakpointObserver} from '@angular/cdk/layout';
 import {LoadingService} from "../../services/loading.service";
 
 @Component({
@@ -16,6 +14,5 @@ export class ContainerComponent {
 
 
   public opened = true;
-
 
 }
