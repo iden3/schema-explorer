@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: schema-explorer
+    image: schema-explorer
+    build:
+      context: .
+    ports:
+      - 80:80
