@@ -1,5 +1,5 @@
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, Validators} from '@angular/forms';
 import {BehaviorSubject, of, take, tap} from 'rxjs';
 import {CONSTANTS} from "../../utils/constants";
@@ -7,27 +7,31 @@ import {SCHEMA_SERVICE} from "../../app.module";
 import {AbstractSchemaService} from "../../services/abstract-schema.service";
 import {LoadingService} from "../../services/loading.service";
 import {catchError} from "rxjs/operators";
+import {EventBusService, EventType} from "../../services/event-bus.service";
 
 @Component({
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss']
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent implements OnInit, OnDestroy {
+
+  private jsonArrived = new BehaviorSubject<unknown>(null);
+  private sourceChangesSub = this.eventBusService.on(EventType.SourceChanges, (source: string) => this.source = source)
 
   constants = CONSTANTS;
   searchControl = new FormControl('', [Validators.required]);
-  searchParams: string = 'searchBy=name';
-
-  private jsonArrived = new BehaviorSubject<unknown>(null);
-
+  searchParams: string = CONSTANTS.SEARCH_BY_NAME;
   jsonArrived$ = this.jsonArrived.asObservable();
+  source: string = CONSTANTS.DEFAULT_SOURCE;
 
   constructor(private snackBar: MatSnackBar,
               @Inject(SCHEMA_SERVICE) private schemaService: AbstractSchemaService,
-              private loadService: LoadingService) {
+              private loadService: LoadingService,
+              private eventBusService: EventBusService) {
   }
 
   ngOnInit(): void {
+
   }
 
   searchSchema(): void {
@@ -35,13 +39,23 @@ export class SearchComponent implements OnInit {
       return;
     }
 
-    if (this.searchParams === 'searchBy=hash' && !(this.searchControl.value as string).startsWith('0x')) {
+    if (
+      this.source === CONSTANTS.ETH
+      && this.searchParams === 'searchBy=hash'
+      && !(this.searchControl.value as string).startsWith('0x')
+    ) {
       this.openSnack('Value is not valid hex string');
       return
     }
+    let searchParams = `type=${this.source}`;
+
+    if (this.source === CONSTANTS.ETH) {
+      searchParams += `&${this.searchParams}`;
+    }
+
     this.loadService.setLoading(true)
     this.schemaService
-      .search(this.searchControl.value, this.searchParams)
+      .search(this.searchControl.value, searchParams)
       .pipe(
         take(1),
         tap(_ => this.disableLoading()),
@@ -71,6 +85,10 @@ export class SearchComponent implements OnInit {
 
   disableLoading() {
     setTimeout(() => this.loadService.setLoading(false), 500)
+  }
+
+  ngOnDestroy(): void {
+    this.sourceChangesSub.unsubscribe();
   }
 
 }

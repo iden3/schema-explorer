@@ -1,22 +1,28 @@
+<mat-toolbar color="secondary">
+  <div class="header">
+    <button mat-icon-button (click)="isExpanded = !isExpanded">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <h1> Schema Uploader</h1>
+  </div>
+  <div class="select">
+    <mat-button-toggle-group name="source" (change)="change($event)"  aria-label="source">
+      <mat-button-toggle [checked]="defaultSource == 'IPFS'"  value="IPFS">IPFS</mat-button-toggle>
+      <mat-button-toggle [checked]="defaultSource == 'ETH'" value="ETH">ETH</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+</mat-toolbar>
 <section class="loading" *ngIf="loadingService.loading$ | async">
   <mat-progress-bar
-    class="example-margin"
     color="primary"
     mode="indeterminate">
   </mat-progress-bar>
 </section>
-<mat-sidenav-container fullscreen>
+<mat-sidenav-container class="content">
   <mat-sidenav #sidenav
-    mode="side"
-    [(opened)]="opened">
+               mode="side"
+               [(opened)]="isExpanded">
     <mat-list>
-      <mat-list-item>
-        <h2 matLine> Schema Uploader</h2>
-        <button mat-icon-button
-          (click)="opened = !opened">
-          <mat-icon>menu</mat-icon>
-        </button>
-      </mat-list-item>
     </mat-list>
     <mat-nav-list>
       <mat-list-item [routerLink]="['/search']">

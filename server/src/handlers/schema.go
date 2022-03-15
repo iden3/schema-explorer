@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/iden3/go-schema-processor/src/common"
 	"github.com/iden3/go-schema-registry-wrapper/wrapper"
+	shell "github.com/ipfs/go-ipfs-api"
 	"github.com/pkg/errors"
 	"io"
 	"mime/multipart"
@@ -16,95 +18,128 @@ import (
 var errorNameRequired = errors.New("name parameter required")
 var errorHotHex = errors.New("provide valid hex string in '0x..' format")
 
-var rpcURL = os.Getenv("RPC_URL")
-var contractAddress = os.Getenv("CONTRACT_ADDRESS")
-var pKeyHex = os.Getenv("PRIVATE_KEY_HEX")
+var RPC_URL = os.Getenv("RPC_URL")
+var IPFS_URL = os.Getenv("IPFS_URL")
+var CONTRACT_ADDRESS = os.Getenv("CONTRACT_ADDRESS")
+var PRIVATE_KEY_HEX = os.Getenv("PRIVATE_KEY_HEX")
 
 func Search(c *fiber.Ctx) error {
+
 	value := c.Params("value")
-	getHash := c.Query("hash")
-	searchBy := c.Query("searchBy")
+	qType := c.Query("type")
+
 	if value == "" {
 		return errorNameRequired
 	}
 	var payload []byte
 	var err error
 
-	if getHash == "true" {
-		payload, err = wrapper.EncodeSchemaHashByName(value)
-	} else if searchBy == "hash" {
-		isHex := strings.HasPrefix(value, "0x")
-		if !isHex {
-			return errorHotHex
+	if qType == "ETH" {
+		getHash := c.Query("hash")
+		searchBy := c.Query("searchBy")
+
+		if getHash == "true" {
+			payload, err = wrapper.EncodeSchemaHashByName(value)
+		} else if searchBy == "hash" {
+			isHex := strings.HasPrefix(value, "0x")
+			if !isHex {
+				return errorHotHex
+			}
+
+			payload, err = wrapper.EncodeSchemaBytesByHash(value)
+		} else {
+			payload, err = wrapper.EncodeSchemaBytesByName(value)
+		}
+		if err != nil {
+			return err
+		}
+		b, err := common.CallContract(c.Context(), RPC_URL, CONTRACT_ADDRESS, payload)
+		if err != nil {
+			return err
 		}
 
-		payload, err = wrapper.EncodeSchemaBytesByHash(value)
-	} else {
-		payload, err = wrapper.EncodeSchemaBytesByName(value)
-	}
-	if err != nil {
-		return err
-	}
-	b, err := common.CallContract(c.Context(), rpcURL, contractAddress, payload)
-	if err != nil {
-		return err
-	}
+		if getHash == "true" {
+			hash, err := wrapper.DecodeSchemaHashByName(b)
 
-	if getHash == "true" {
-		hash, err := wrapper.DecodeSchemaHashByName(b)
+			if err != nil {
+				return err
+			}
+			resp := make(map[string]interface{})
+			resp["hash"] = hash.Hex()
+
+			c.Accepts("application/json")
+			c.Status(200)
+			b, err := json.Marshal(resp)
+			_, err = c.Write(b)
+			if err != nil {
+				return err
+			}
+
+			return nil
+
+		}
+
+		if searchBy == "hash" {
+			b, err := wrapper.DecodeSchemaBytesByHash(b)
+
+			if err != nil {
+				return err
+			}
+
+			c.Accepts("application/json")
+			c.Status(200)
+			_, err = c.Write(b)
+			if err != nil {
+				return err
+			}
+
+			return nil
+		}
+
+		d, err := wrapper.DecodeSchemaBytesByName(b)
 
 		if err != nil {
 			return err
 		}
-		resp := make(map[string]interface{})
-		resp["hash"] = hash.Hex()
-
 		c.Accepts("application/json")
 		c.Status(200)
-		b, err := json.Marshal(resp)
-		_, err = c.Write(b)
+		_, err = c.Write(d)
 		if err != nil {
 			return err
 		}
-
-		return nil
-
 	}
 
-	if searchBy == "hash" {
-		b, err := wrapper.DecodeSchemaBytesByHash(b)
+	if qType == "IPFS" {
+
+		sh := shell.NewShell(IPFS_URL)
+
+		data, err := sh.Cat(value)
 
 		if err != nil {
 			return err
 		}
 
+		buf := new(bytes.Buffer)
+		_, err = buf.ReadFrom(data)
+		if err != nil {
+			return err
+		}
 		c.Accepts("application/json")
 		c.Status(200)
-		_, err = c.Write(b)
+		_, err = c.Write(buf.Bytes())
 		if err != nil {
 			return err
 		}
-
-		return nil
-	}
-
-	d, err := wrapper.DecodeSchemaBytesByName(b)
-
-	if err != nil {
-		return err
-	}
-	c.Accepts("application/json")
-	c.Status(200)
-	_, err = c.Write(d)
-	if err != nil {
-		return err
 	}
 
 	return nil
 }
 
 func SaveSchema(c *fiber.Ctx) error {
+	var err error
 	form, err := c.FormFile("json")
+	qType := c.Query("type")
+
 	if err != nil {
 		return errorNameRequired
 	}
@@ -123,24 +158,17 @@ func SaveSchema(c *fiber.Ctx) error {
 		return err
 	}
 
-	name := common.FileNameWithoutExtension(form.Filename)
-	payload, err := wrapper.EncodeSaveTransaction(name, buf.Bytes())
-
-	tx, err := common.CallTransaction(c.Context(), pKeyHex, rpcURL, contractAddress, payload)
-
-	if err != nil {
-		return err
+	var b []byte
+	if qType == "IPFS" {
+		b, err = uploadToIpfs(IPFS_URL, buf.Bytes())
+	} else {
+		name := common.FileNameWithoutExtension(form.Filename)
+		b, err = uploadToEth(c.Context(), name, buf.Bytes())
 	}
 
 	c.Accepts("application/json")
 	c.Status(200)
-	r := make(map[string]string)
-	r["txHex"] = tx.Hash().Hex()
-	b, err := json.Marshal(r)
 
-	if err != nil {
-		return err
-	}
 	_, err = c.Write(b)
 
 	if err != nil {
@@ -148,4 +176,41 @@ func SaveSchema(c *fiber.Ctx) error {
 	}
 
 	return nil
+}
+
+func uploadToIpfs(url string, jsonB []byte) ([]byte, error) {
+	sh := shell.NewShell(url)
+
+	cid, err := sh.Add(bytes.NewReader(jsonB))
+	if err != nil {
+		return nil, err
+	}
+	r := make(map[string]string)
+	r["CID"] = cid
+	b, err := json.Marshal(r)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return b, nil
+}
+
+func uploadToEth(ctx context.Context, name string, body []byte) ([]byte, error) {
+	payload, err := wrapper.EncodeSaveTransaction(name, body)
+
+	tx, err := common.CallTransaction(ctx, PRIVATE_KEY_HEX, RPC_URL, CONTRACT_ADDRESS, payload)
+
+	if err != nil {
+		return nil, err
+	}
+	r := make(map[string]string)
+	r["txHex"] = tx.Hash().Hex()
+	b, err := json.Marshal(r)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return b, nil
 }
