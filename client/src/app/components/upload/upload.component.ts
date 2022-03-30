@@ -1,25 +1,30 @@
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {Component, Inject} from '@angular/core';
+import {Component, Inject, OnDestroy} from '@angular/core';
 import {NgxFileDropEntry} from "ngx-file-drop";
 import {SCHEMA_SERVICE} from "../../app.module";
 import {AbstractSchemaService} from "../../services/abstract-schema.service";
 import {of, take, tap} from "rxjs";
 import {LoadingService} from "../../services/loading.service";
 import {catchError} from "rxjs/operators";
+import {EventBusService, EventType} from "../../services/event-bus.service";
+import {CONSTANTS} from "../../utils/constants";
 
 
 @Component({
   templateUrl: './upload.component.html',
   styleUrls: ['./upload.component.scss']
 })
-export class UploadComponent {
+export class UploadComponent implements OnDestroy {
+  source: string = CONSTANTS.DEFAULT_SOURCE;
+  public files: NgxFileDropEntry[] = [];
+  private sourceChangesSub = this.eventBusService.on(EventType.SourceChanges, (source: string) => this.source = source)
 
   constructor(@Inject(SCHEMA_SERVICE) private schemaService: AbstractSchemaService,
               private snackBar: MatSnackBar,
-              private loadService: LoadingService) {
+              private loadService: LoadingService,
+              private eventBusService: EventBusService) {
   }
 
-  public files: NgxFileDropEntry[] = [];
 
   public dropped(files: NgxFileDropEntry[]) {
     this.files = files;
@@ -31,9 +36,9 @@ export class UploadComponent {
         const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
         fileEntry.file(async (file: File) => {
           const formData = new FormData();
-          const path = droppedFile.relativePath;
-          formData.append('json', file, path);
-
+          const relativePath = droppedFile.relativePath;
+          formData.append('json', file, relativePath);
+          const path = `${relativePath}?type=${this.source}`;
           this.schemaService.uploadSchema(file, path).pipe(
             take(1),
             tap(_ => this.disableLoading()),
@@ -46,7 +51,7 @@ export class UploadComponent {
           )
             .subscribe(d => {
               if (!!d) {
-                this.openSnack(`Schema uploaded successfully tx_id: ${d?.txHex}`)
+                this.openSnack(`Schema uploaded successfully tx_id: ${JSON.stringify(d)}`)
               }
               console.log(d)
             });
@@ -73,6 +78,10 @@ export class UploadComponent {
 
   disableLoading() {
     setTimeout(() => this.loadService.setLoading(false), 500)
+  }
+
+  ngOnDestroy(): void {
+    this.sourceChangesSub.unsubscribe();
   }
 
 }

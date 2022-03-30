@@ -5,12 +5,12 @@
       <form class="search-form">
         <mat-form-field class="search-full-width"
                         appearance="outline">
-          <mat-label>Schema Name</mat-label>
+          <mat-label>Schema</mat-label>
           <input matInput
                  [formControl]="searchControl">
         </mat-form-field>
       </form>
-      <mat-radio-group aria-label="Select an option"
+      <mat-radio-group aria-label="Select an option" *ngIf="source !== constants.IPFS"
                        [(ngModel)]="searchParams">
         <mat-radio-button
           [value]="constants.SEARCH_BY_NAME">Search by name

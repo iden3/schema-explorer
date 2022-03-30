@@ -28,6 +28,8 @@ import {Web3SchemaService} from "./services/web3Schema.service";
 import {SchemaService} from "./services/schema.service";
 import {environment} from "../environments/environment";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
+import {MatToolbarModule} from "@angular/material/toolbar";
+import {MatButtonToggleModule} from "@angular/material/button-toggle";
 
 export const SCHEMA_SERVICE = new InjectionToken<AbstractSchemaService>('schema.service');
 
@@ -63,6 +65,8 @@ const schemaFactory = (http: HttpClient, window: any) => {
     MatSidenavModule,
     MatListModule,
     MatInputModule,
+    MatToolbarModule,
+    MatButtonToggleModule,
     MatSnackBarModule,
     NgxFileDropModule,
     LayoutModule,
