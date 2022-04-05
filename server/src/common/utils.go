@@ -3,12 +3,12 @@ package common
 import (
 	"context"
 	"crypto/ecdsa"
+	"encoding/hex"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethereum/go-ethereum/params"
 	"github.com/pkg/errors"
 	"math/big"
 	"path/filepath"
@@ -153,46 +153,36 @@ func CallTransaction(ctx context.Context, privateKeyHex, rpcURL, cAddress string
 	}
 
 	tx := types.NewTx(baseTx)
-	chainID, err := cl.ChainID(ctx)
+
+	chainID, err := cl.NetworkID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	signedTx, err := types.SignTx(tx, types.NewEIP155Signer(chainID), privateKey)
+	if err != nil {
+		return nil, err
+	}
+
+	err = cl.SendTransaction(context.Background(), signedTx)
 
 	if err != nil {
 		return nil, err
 	}
 
-	bl, err := cl.BlockNumber(ctx)
-
-	if err != nil {
-		return nil, err
-	}
-
-	s := types.MakeSigner(&params.ChainConfig{
-		ChainID: chainID,
-	}, new(big.Int).SetUint64(bl))
-
-	h := s.Hash(tx)
-
-	sig, err := crypto.Sign(h[:], privateKey)
-
-	if err != nil {
-		return nil, err
-	}
-
-	signTx, err := tx.WithSignature(s, sig)
-
-	if err != nil {
-		return nil, err
-	}
-
-	err = cl.SendTransaction(ctx, signTx)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return signTx, nil
+	return signedTx, nil
 
 }
 
+// FileNameWithoutExtension truncates extension
 func FileNameWithoutExtension(fileName string) string {
 	return strings.TrimSuffix(fileName, filepath.Ext(fileName))
+}
+
+// CreateSchemaHash returns hash of schema and credential type parameters
+func CreateSchemaHash(schemaBytes []byte, credentialType string) string {
+	var sHash [16]byte
+	h := crypto.Keccak256(schemaBytes, []byte(credentialType))
+	copy(sHash[:], h[len(h)-16:])
+	return hex.EncodeToString(sHash[:])
 }

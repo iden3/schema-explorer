@@ -1,0 +1,26 @@
+<div class="grid-container">
+  <h1 class="mat-h1">Dashboard</h1>
+  <div class="grid">
+    <mat-card class="dashboard-card">
+      <mat-card-header>
+        <mat-card-title>
+          Schema List
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="dashboard-card-content">
+        <app-schema-list [schemas]="(schemas$ | async)"></app-schema-list>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="dashboard-card">
+      <mat-card-header>
+        <mat-card-title>
+          Register Schema
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="dashboard-card-content">
+        <app-register-schema (RegisterEvt)="onRegister($event)"></app-register-schema>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

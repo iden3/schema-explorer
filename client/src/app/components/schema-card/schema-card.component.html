@@ -1,0 +1,36 @@
+<div class="grid-container">
+  <h1 class="mat-h1">Schema Detail</h1>
+  <div class="container">
+    <div class="detail">
+      <mat-list *ngIf="schema$ | async as s">
+        <mat-list-item>ID: {{s?.id}}</mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>CredentialType: {{s?.credentialType}}</mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item mat-line>Url: {{s?.url}}</mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>Description: {{s?.desc}}</mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>Created By: {{s?.creator}}</mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>Created At: {{s?.timestamp | date}}</mat-list-item>
+      </mat-list>
+    </div>
+
+    <div class="json">
+      <header>
+        <h3>Json
+          <button mat-icon-button
+                  (click)="copy()">
+            <mat-icon>content_copy</mat-icon>
+          </button>
+        </h3>
+
+      </header>
+      <div>
+        <pre *ngIf="(json$ | async)  as data"
+             [innerHTML]=" data| prettyjson:3"></pre>
+      </div>
+    </div>
+  </div>
+</div>

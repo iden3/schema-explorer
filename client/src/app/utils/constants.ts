@@ -11,16 +11,41 @@ export const CONSTANTS = Object.freeze({
       "inputs": [
         {
           "internalType": "bytes32",
-          "name": "hash",
+          "name": "id",
           "type": "bytes32"
         }
       ],
-      "name": "getBytesByHash",
+      "name": "getSchemaById",
       "outputs": [
         {
-          "internalType": "bytes",
+          "internalType": "bytes32",
           "name": "",
-          "type": "bytes"
+          "type": "bytes32"
+        },
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -29,57 +54,73 @@ export const CONSTANTS = Object.freeze({
     {
       "inputs": [
         {
+          "internalType": "bytes32",
+          "name": "id",
+          "type": "bytes32"
+        },
+        {
           "internalType": "string",
-          "name": "name",
+          "name": "credentialType",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "url",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "desc",
           "type": "string"
         }
       ],
-      "name": "getBytesByName",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "",
-          "type": "bytes"
-        }
-      ],
-      "stateMutability": "view",
+      "name": "save",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "string",
-          "name": "name",
-          "type": "string"
-        }
-      ],
-      "name": "getHashByName",
-      "outputs": [
         {
           "internalType": "bytes32",
           "name": "",
           "type": "bytes32"
         }
       ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
+      "name": "schemaMap",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "creator",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "id",
+          "type": "bytes32"
+        },
         {
           "internalType": "string",
-          "name": "schemaName",
+          "name": "credentialType",
           "type": "string"
         },
         {
-          "internalType": "bytes",
-          "name": "schemaBody",
-          "type": "bytes"
+          "internalType": "string",
+          "name": "url",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "desc",
+          "type": "string"
         }
       ],
-      "name": "save",
-      "outputs": [],
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
       "type": "function"
     }
   ]

@@ -1,0 +1,24 @@
+<form class="form" [formGroup]="form" (ngSubmit)="register()">
+  <mat-form-field class="full-width" appearance="outline">
+    <mat-label>URL</mat-label>
+    <input matInput formControlName="url">
+    <mat-error *ngIf="url?.errors?.['required']">Required</mat-error>
+    <mat-error *ngIf="url?.errors?.['url']">Url could have ipfs or http schemas</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="full-width" appearance="outline">
+    <mat-label>Credential Type</mat-label>
+    <input matInput formControlName="credentialType">
+    <mat-error *ngIf="credentialType?.errors?.['required']">Required</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="full-width" appearance="outline">
+    <mat-label>Description</mat-label>
+    <input matInput formControlName="desc">
+    <mat-error *ngIf="desc?.errors?.['required']">Required</mat-error>
+  </mat-form-field>
+
+  <button [disabled]="form.invalid" mat-stroked-button
+          type="submit">Register
+  </button>
+</form>

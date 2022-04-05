@@ -1,5 +1,5 @@
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy} from '@angular/core';
 import {FormControl, Validators} from '@angular/forms';
 import {BehaviorSubject, of, take, tap} from 'rxjs';
 import {CONSTANTS} from "../../utils/constants";
@@ -13,7 +13,7 @@ import {EventBusService, EventType} from "../../services/event-bus.service";
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss']
 })
-export class SearchComponent implements OnInit, OnDestroy {
+export class SearchComponent implements OnDestroy {
 
   private jsonArrived = new BehaviorSubject<unknown>(null);
   private sourceChangesSub = this.eventBusService.on(EventType.SourceChanges, (source: string) => this.source = source)
@@ -28,10 +28,6 @@ export class SearchComponent implements OnInit, OnDestroy {
               @Inject(SCHEMA_SERVICE) private schemaService: AbstractSchemaService,
               private loadService: LoadingService,
               private eventBusService: EventBusService) {
-  }
-
-  ngOnInit(): void {
-
   }
 
   searchSchema(): void {

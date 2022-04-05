@@ -28,7 +28,8 @@
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/ngx-spinner/animations/cube-transition.css"
             ],
             "scripts": []
           },
@@ -104,9 +105,21 @@
             ],
             "scripts": []
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
   },
-  "defaultProject": "schema-uploader"
+  "defaultProject": "schema-uploader",
+  "cli": {
+    "defaultCollection": "@angular-eslint/schematics"
+  }
 }

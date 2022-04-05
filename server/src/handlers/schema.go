@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/gofiber/fiber/v2"
-	"github.com/iden3/go-schema-processor/src/common"
+	"github.com/iden3/go-schema-explorer/src/common"
 	"github.com/iden3/go-schema-registry-wrapper/wrapper"
 	shell "github.com/ipfs/go-ipfs-api"
 	"github.com/pkg/errors"

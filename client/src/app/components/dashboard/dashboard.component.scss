@@ -1,0 +1,14 @@
+.grid-container {
+  margin: 1em;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 8fr 4fr;
+  gap: 8px;
+}
+
+.dashboard-card {
+  display: flex;
+  flex-direction: column;
+}

@@ -1,4 +1,4 @@
-import {InjectionToken, NgModule} from '@angular/core';
+import { InjectionToken, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 
 import {AppComponent} from './app.component';
@@ -30,6 +30,11 @@ import {environment} from "../environments/environment";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatButtonToggleModule} from "@angular/material/button-toggle";
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { RegisterSchemaComponent } from './components/register-schema/register-schema.component';
+import { SchemaListComponent } from './components/schema-list/schema-list.component';
+import { NgxSpinnerModule } from "ngx-spinner";
+import { SchemaCardComponent } from './components/schema-card/schema-card.component';
 
 export const SCHEMA_SERVICE = new InjectionToken<AbstractSchemaService>('schema.service');
 
@@ -45,7 +50,11 @@ const schemaFactory = (http: HttpClient, window: any) => {
     AppComponent,
     ContainerComponent,
     SearchComponent,
-    UploadComponent
+    UploadComponent,
+    DashboardComponent,
+    RegisterSchemaComponent,
+    SchemaListComponent,
+    SchemaCardComponent
   ],
   imports: [
     BrowserModule,
@@ -70,11 +79,13 @@ const schemaFactory = (http: HttpClient, window: any) => {
     MatSnackBarModule,
     NgxFileDropModule,
     LayoutModule,
+    NgxSpinnerModule
   ],
   providers: [
     {provide: 'Window', useValue: window},
     {provide: SCHEMA_SERVICE, useFactory: schemaFactory, deps: [HttpClient, 'Window']}
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
 })
 export class AppModule {

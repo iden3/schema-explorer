@@ -1,5 +1,4 @@
-import {Component, OnInit} from '@angular/core';
-import {LoadingService} from "../../services/loading.service";
+import {Component} from '@angular/core';
 import {EmitEvent, EventBusService, EventType} from "../../services/event-bus.service";
 import {CONSTANTS} from "../../utils/constants";
 
@@ -14,7 +13,7 @@ export class ContainerComponent {
 
   isExpanded = true;
 
-  constructor(public loadingService: LoadingService, private eventBusService: EventBusService) {
+  constructor(private eventBusService: EventBusService) {
   }
 
   change({value}: { value: string }) {
