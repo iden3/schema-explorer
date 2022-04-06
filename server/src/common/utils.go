@@ -164,7 +164,7 @@ func CallTransaction(ctx context.Context, privateKeyHex, rpcURL, cAddress string
 		return nil, err
 	}
 
-	err = cl.SendTransaction(context.Background(), signedTx)
+	err = cl.SendTransaction(ctx, signedTx)
 
 	if err != nil {
 		return nil, err

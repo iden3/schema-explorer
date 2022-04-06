@@ -9,7 +9,7 @@ import (
 // ABI json ABI representation
 var ABI abi.ABI
 
-var jsonABI = `[
+const jsonABI = `[
 	{
 		"inputs": [
 			{
