@@ -3,29 +3,22 @@
     <button mat-icon-button (click)="isExpanded = !isExpanded">
       <mat-icon>menu</mat-icon>
     </button>
-    <h1> Schema Uploader</h1>
+    <h1>Schema Uploader</h1>
   </div>
+  <mat-button-toggle-group [value]="isMetamask" (change)="modeChanged($event)">
+    <mat-button-toggle [value]="false">Backend</mat-button-toggle>
+    <mat-button-toggle [value]="true">Metamask</mat-button-toggle>
+  </mat-button-toggle-group>
 </mat-toolbar>
 <mat-sidenav-container class="content">
-  <mat-sidenav #sidenav
-               mode="side"
-               [(opened)]="isExpanded">
-    <mat-list>
-    </mat-list>
+  <mat-sidenav #sidenav mode="side" [(opened)]="isExpanded">
+    <mat-list> </mat-list>
     <mat-nav-list>
       <mat-list-item [routerLink]="['/dashboard']">
         <a matLine>Dashboard</a>
         <button mat-icon-button>
           <mat-icon>dashboard</mat-icon>
         </button>
-
-      </mat-list-item>
-      <mat-list-item [disabled]="true" [routerLink]="['/search']">
-        <a  matLine>Search</a>
-        <button mat-icon-button>
-          <mat-icon>search</mat-icon>
-        </button>
-
       </mat-list-item>
       <mat-list-item [routerLink]="['/upload']">
         <a matLine>IPFS Upload</a>
@@ -39,7 +32,3 @@
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
-
-
-
-

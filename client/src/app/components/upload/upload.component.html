@@ -1,26 +1,36 @@
 <div class="grid-container">
   <h1 class="mat-h1">IPFS Upload</h1>
-  <mat-grid-list cols="2"
-                 rowHeight="350px">
-
-    <mat-grid-tile colspan="2"
-                   rowspan="1">
+  <mat-grid-list cols="2" rowHeight="350px">
+    <mat-grid-tile colspan="2" rowspan="1">
       <mat-card class="dashboard-card">
         <mat-card-header>
-          <mat-card-title>
-          </mat-card-title>
+          <mat-card-title> </mat-card-title>
         </mat-card-header>
 
         <mat-card-content class="dashboard-card-content">
           <div class="center">
-            <ngx-file-drop dropZoneLabel="Drop files here" (onFileDrop)="dropped($event)"
-                           accept=".json,.json-ld"
-                           (onFileOver)="fileOver($event)" (onFileLeave)="fileLeave($event)">
+            <ngx-file-drop
+              dropZoneLabel="Drop files here"
+              (onFileDrop)="dropped($event)"
+              accept=".json,.json-ld"
+              (onFileOver)="fileOver($event)"
+              (onFileLeave)="fileLeave($event)">
               <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
-                <button mat-stroked-button  type="button" (click)="openFileSelector()">Browse Files</button>
+                <button mat-stroked-button type="button" (click)="openFileSelector()">Browse Files</button>
               </ng-template>
             </ngx-file-drop>
           </div>
+          <mat-list class="center" *ngIf="d">
+            <mat-divider></mat-divider>
+
+            <mat-list-item>
+              <button mat-icon-button (click)="copy()">
+                <mat-icon>content_copy</mat-icon>
+              </button>
+              {{ d | json }}
+            </mat-list-item>
+            <mat-divider></mat-divider>
+          </mat-list>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

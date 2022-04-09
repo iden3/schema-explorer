@@ -1,14 +1,17 @@
 package common
 
 import (
+	"bytes"
 	"context"
 	"crypto/ecdsa"
 	"encoding/hex"
+	"encoding/json"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
+	shell "github.com/ipfs/go-ipfs-api"
 	"github.com/pkg/errors"
 	"math/big"
 	"path/filepath"
@@ -36,72 +39,6 @@ func CallContract(ctx context.Context, rpcURL, cAddress string, payload []byte) 
 
 	return res, nil
 }
-
-//
-//func CallTransaction(ctx context.Context, privateKeyHex, rpcURL, cAddress string, payload []byte) (*types.Transaction, error) {
-//	cl, err := ethclient.DialContext(ctx, rpcURL)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	privateKey, err := crypto.HexToECDSA(privateKeyHex)
-//
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	publicKey := privateKey.Public()
-//	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
-//	if !ok {
-//		return nil, errorPublicKeyCasting
-//	}
-//
-//	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
-//
-//	nonce, err := cl.PendingNonceAt(ctx, fromAddress)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	gasPrice, err := cl.SuggestGasPrice(ctx)
-//	address := common.HexToAddress(cAddress)
-//
-//	gasEstimate, err := cl.EstimateGas(ctx, ethereum.CallMsg{
-//		From:     fromAddress, // the sender of the 'transaction'
-//		To:       &address,
-//		GasPrice: gasPrice,
-//		Gas:      0,             // wei <-> gas exchange ratio
-//		Value:    big.NewInt(0), // amount of wei sent along with the call
-//		Data:     payload})
-//
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	baseTx := &types.LegacyTx{
-//		To:       &address,
-//		Nonce:    nonce,
-//		GasPrice: gasPrice,
-//		Gas:      gasEstimate,
-//		Value:    big.NewInt(0),
-//		Data:     payload,
-//	}
-//
-//	tx := types.NewTx(baseTx)
-//
-//	signTx, err := types.SignTx(tx, types.HomesteadSigner{}, privateKey)
-//
-//	if err != nil {
-//		return nil, err
-//	}
-//	err = cl.SendTransaction(ctx, signTx)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	return signTx, nil
-//
-//}
 
 func CallTransaction(ctx context.Context, privateKeyHex, rpcURL, cAddress string, payload []byte) (*types.Transaction, error) {
 	cl, err := ethclient.DialContext(ctx, rpcURL)
@@ -185,4 +122,23 @@ func CreateSchemaHash(schemaBytes []byte, credentialType string) string {
 	h := crypto.Keccak256(schemaBytes, []byte(credentialType))
 	copy(sHash[:], h[len(h)-16:])
 	return hex.EncodeToString(sHash[:])
+}
+
+// UploadToIpfs uploads schema to IPFS
+func UploadToIpfs(url string, jsonB []byte) ([]byte, error) {
+	sh := shell.NewShell(url)
+
+	cid, err := sh.Add(bytes.NewReader(jsonB))
+	if err != nil {
+		return nil, err
+	}
+	r := make(map[string]string)
+	r["CID"] = cid
+	b, err := json.Marshal(r)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return b, nil
 }

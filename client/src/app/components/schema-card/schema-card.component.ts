@@ -1,61 +1,68 @@
-import {Component, OnInit} from '@angular/core';
-import {DataService} from "../../services/data.service";
-import {ActivatedRoute} from "@angular/router";
-import {DashboardService} from "../../services/dashboard.service";
-import {finalize, Observable, of, share, switchMap, take, tap} from "rxjs"
-import {LoadingService} from "../../services/loading.service";
-import {Schema} from "../../models/schema";
-import {MatSnackBar} from "@angular/material/snack-bar";
+import { Component, OnInit } from '@angular/core';
+import { DataService } from '../../services/data.service';
+import { ActivatedRoute } from '@angular/router';
+import { DashboardService } from '../../services/dashboard.service';
+import { finalize, Observable, of, switchMap, take, tap } from 'rxjs';
+import { LoadingService } from '../../services/loading.service';
+import { Schema } from '../../models/schema';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-schema-card',
   templateUrl: './schema-card.component.html',
-  styleUrls: ['./schema-card.component.scss']
+  styleUrls: ['./schema-card.component.scss'],
 })
 export class SchemaCardComponent implements OnInit {
-
-  constructor(public readonly dataService: DataService,
-              private readonly activatedRoute: ActivatedRoute,
-              private readonly dashboardService: DashboardService,
-              private readonly loadingService: LoadingService,
-              private readonly snackBar: MatSnackBar,
-  ) {
-  }
+  constructor(
+    public readonly dataService: DataService,
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly dashboardService: DashboardService,
+    private readonly loadingService: LoadingService,
+    private readonly snackBar: ToastrService
+  ) {}
 
   schema$!: Observable<Schema>;
   json$!: Observable<any>;
 
-
   ngOnInit(): void {
-    this.loadingService.setLoading(true)
+    this.loadingService.setLoading(true);
     this.schema$ = this.dataService.schema$.pipe(
-      tap(console.log),
-      switchMap((s) => {
-        return s
-          ? of(s).pipe(finalize(() => this.loadingService.setLoading(false)))
-          : this.dashboardService.getSchemaById(this.activatedRoute.snapshot.params['id']).pipe(
-            finalize(() => this.loadingService.setLoading(false))
-          )
+      switchMap(s => {
+        return s ? of(s) : this.dashboardService.getSchemaById(this.activatedRoute.snapshot.params['id']);
       }),
       tap((s: Schema) => {
-        this.json$ = this.dashboardService.getSchemaBody(s.url).pipe(share());
-      }),
-      finalize(() => this.loadingService.setLoading(false))
-    )
-
+        this.loadingService.setLoading(true);
+        this.json$ = this.dashboardService.getSchemaBody(s.url).pipe(
+          finalize(() => {
+            return this.loadingService.setLoading(false);
+          })
+        );
+      })
+      // finalize(() => this.loadingService.setLoading(false))
+    );
   }
 
-  copy(): void {
-    this.json$.pipe(
-      take(1),
-      tap(d => {
-        const data = [new ClipboardItem({'text/plain': new Blob([JSON.stringify(d)], {type: 'text/plain'})})];
-        navigator.clipboard.write(data).then(() => this.openSnack('Copied to clipboard'), () => this.openSnack('Unable to write to clipboard.'));
-      })
-    ).subscribe()
+  copy(event: Event): void {
+    event.stopPropagation();
+    this.json$
+      .pipe(
+        take(1),
+        tap(d => {
+          const data = [
+            new ClipboardItem({
+              'text/plain': new Blob([JSON.stringify(d)], { type: 'text/plain' }),
+            }),
+          ];
+          navigator.clipboard.write(data).then(
+            () => this.openSnack('Copied to clipboard'),
+            () => this.openSnack('Unable to write to clipboard.')
+          );
+        })
+      )
+      .subscribe();
   }
 
   openSnack(msg: string) {
-    this.snackBar.open(msg, '', {duration: 2000})
+    this.snackBar.info(msg);
   }
 }

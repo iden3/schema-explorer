@@ -1,16 +1,13 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LoadingService {
+  constructor(private spinner: NgxSpinnerService) {}
 
-  constructor(private spinner: NgxSpinnerService) {
-  }
-
-  setLoading(loading: boolean): Promise<unknown> {
-    return loading ? this.spinner.show() : this.spinner.hide()
+  setLoading(loading: boolean): Promise<any> {
+    return loading ? this.spinner.show() : this.spinner.hide();
   }
 }
-

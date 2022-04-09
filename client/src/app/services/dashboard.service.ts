@@ -1,41 +1,40 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {map, Observable, tap} from "rxjs";
-import {Schema} from "../models/schema";
+import { Injectable } from '@angular/core';
+import { Dashboard } from '../models/dashboard';
+import { Observable, Subject } from 'rxjs';
+import { Schema } from '../models/schema';
+import { DataService } from './data.service';
+import { DashboardBackendService } from './dashboard-backend.service';
+import { DashboardMetamaskService } from './dashboard-metamask.service';
+import { CONSTANTS } from '../utils/constants';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class DashboardService {
+export class DashboardService implements Dashboard {
+  service!: Dashboard;
+  destroyed$ = new Subject<boolean>();
 
-  constructor(private readonly http: HttpClient) {
-  }
-
-  registerSchema(schema: Schema): Observable<unknown> {
-    return this.http.post('api/schema/register', schema).pipe(tap(console.log))
+  constructor(
+    private readonly dataService: DataService,
+    private readonly backendService: DashboardBackendService,
+    private readonly metamaskService: DashboardMetamaskService
+  ) {
+    this.service = localStorage.getItem(CONSTANTS.USE_METAMASK) ? metamaskService : backendService;
   }
 
   getIds(): Observable<string[][]> {
-    return this.http.get<string[][]>('api/schema/ids').pipe(tap(console.log))
-  }
-
-  getSchemaById(id: string): Observable<Schema> {
-    return this.http.get<any[]>(`api/schema/${id}`).pipe(
-      map(([id, credentialType, url, desc, creator, timestamp]): Schema => ({
-        id,
-        credentialType,
-        url,
-        desc,
-        creator,
-        timestamp
-      })),
-      tap(console.log)
-    )
+    return this.service.getIds();
   }
 
   getSchemaBody(url: string): Observable<Schema> {
-    return this.http.get<any[]>(`api/schema/body`, {params: {url}}).pipe(
-      tap(console.log)
-    )
+    return this.service.getSchemaBody(url);
+  }
+
+  getSchemaById(id: string): Observable<Schema> {
+    return this.service.getSchemaById(id);
+  }
+
+  registerSchema(schema: Schema): Observable<unknown> {
+    return this.service.registerSchema(schema);
   }
 }

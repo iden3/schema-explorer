@@ -6,7 +6,15 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/iden3/go-schema-explorer/src/common"
 	"github.com/pkg/errors"
+	"os"
 )
+
+var errorNameRequired = errors.New("name parameter required")
+var errorHotHex = errors.New("provide valid hex string in '0x..' format")
+
+var RPC_URL = os.Getenv("RPC_URL")
+var CONTRACT_ADDRESS = os.Getenv("CONTRACT_ADDRESS")
+var PRIVATE_KEY_HEX = os.Getenv("PRIVATE_KEY_HEX")
 
 type schemaReq struct {
 	URL            string `json:"url"`
@@ -134,6 +142,30 @@ func LoadSchemaBody(c *fiber.Ctx) error {
 	}
 	c.Write(b)
 	c.Accepts("application/json")
+	c.Status(200)
+	return nil
+}
+
+func CalculateSchemaHash(c *fiber.Ctx) error {
+	body := c.Body()
+	var payload schemaReq
+	err := json.Unmarshal(body, &payload)
+	if err != nil {
+		return err
+	}
+
+	schemaB, err := common.Load(c.Context(), payload.URL)
+	if err != nil {
+		return err
+	}
+
+	hash := common.CreateSchemaHash(schemaB, payload.CredentialType)
+	r := make(map[string]string)
+	r["id"] = hash
+	err = c.JSON(r)
+	if err != nil {
+		return err
+	}
 	c.Status(200)
 	return nil
 }

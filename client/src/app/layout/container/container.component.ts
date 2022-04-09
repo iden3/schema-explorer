@@ -1,22 +1,19 @@
-import {Component} from '@angular/core';
-import {EmitEvent, EventBusService, EventType} from "../../services/event-bus.service";
-import {CONSTANTS} from "../../utils/constants";
+import { Component, Inject } from '@angular/core';
+import { CONSTANTS } from '../../utils/constants';
 
 @Component({
   selector: 'app-container',
   templateUrl: './container.component.html',
-  styleUrls: ['./container.component.scss']
+  styleUrls: ['./container.component.scss'],
 })
 export class ContainerComponent {
-
-  defaultSource: string = CONSTANTS.DEFAULT_SOURCE
-
   isExpanded = true;
+  isMetamask: boolean = !!localStorage.getItem(CONSTANTS.USE_METAMASK);
 
-  constructor(private eventBusService: EventBusService) {
-  }
+  constructor(@Inject('Window') private readonly window: any) {}
 
-  change({value}: { value: string }) {
-    this.eventBusService.emit(new EmitEvent(EventType.SourceChanges, value))
+  modeChanged({ value }: { value: boolean }) {
+    localStorage.setItem(CONSTANTS.USE_METAMASK, value ? 'true' : '');
+    this.window.location.reload();
   }
 }

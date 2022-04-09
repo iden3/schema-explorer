@@ -8,7 +8,20 @@
   gap: 8px;
 }
 
+.search-header {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .dashboard-card {
   display: flex;
   flex-direction: column;
+}
+
+.register {
+  position: sticky;
+  top: 0;
+  height: fit-content;
 }
