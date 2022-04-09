@@ -20,3 +20,10 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 ## Server
 
 Server developes using golang using and exposed on `http://localhost:3000/`
+Used ENV VARIABLES
+```bash
+export IPFS_URL="..."
+export CONTRACT_ADDRESS="..."
+export PRIVATE_KEY_HEX="..."
+export RPC_URL="..."
+```
