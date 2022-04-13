@@ -5,7 +5,7 @@
     </button>
     <h1>Schema Uploader</h1>
   </div>
-  <mat-button-toggle-group [value]="isMetamask" (change)="modeChanged($event)">
+  <mat-button-toggle-group *ngIf="!isProd" [value]="isMetamask" (change)="modeChanged($event)">
     <mat-button-toggle [value]="false">Backend</mat-button-toggle>
     <mat-button-toggle [value]="true">Metamask</mat-button-toggle>
   </mat-button-toggle-group>
