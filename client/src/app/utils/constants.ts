@@ -1,86 +1,92 @@
 export const CONSTANTS = Object.freeze({
-  SEARCH_BY_NAME: 'searchBy=name',
-  SEARCH_BY_HASH: 'searchBy=hash',
-  GET_HASH: 'hash=true',
-  DEFAULT_SOURCE: 'IPFS',
-  ETH: 'ETH',
-  IPFS: 'IPFS',
-  SEARCH_IPFS: '&ipfs=true',
+  // CONTRACT_ADDRESS: '0x107877D50B03e7131F92236C7187c375b8919ff7',
+  CONTRACT_ADDRESS: '0xb2C1BEf0Dac835A43fBeC605d7CE04A4BA6CD499',
   ABI_JSON: [
     {
-      "inputs": [
+      inputs: [
         {
-          "internalType": "bytes32",
-          "name": "hash",
-          "type": "bytes32"
-        }
-      ],
-      "name": "getBytesByHash",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "",
-          "type": "bytes"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "name",
-          "type": "string"
-        }
-      ],
-      "name": "getBytesByName",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "",
-          "type": "bytes"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "name",
-          "type": "string"
-        }
-      ],
-      "name": "getHashByName",
-      "outputs": [
-        {
-          "internalType": "bytes32",
-          "name": "",
-          "type": "bytes32"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "schemaName",
-          "type": "string"
+          internalType: 'string',
+          name: 'id',
+          type: 'string',
         },
         {
-          "internalType": "bytes",
-          "name": "schemaBody",
-          "type": "bytes"
-        }
+          internalType: 'string',
+          name: 'credentialType',
+          type: 'string',
+        },
+        {
+          internalType: 'string',
+          name: 'url',
+          type: 'string',
+        },
+        {
+          internalType: 'string',
+          name: 'desc',
+          type: 'string',
+        },
       ],
-      "name": "save",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    }
-  ]
-})
+      name: 'save',
+      outputs: [],
+      stateMutability: 'nonpayable',
+      type: 'function',
+    },
+    {
+      inputs: [],
+      name: 'getIds',
+      outputs: [
+        {
+          internalType: 'string[]',
+          name: '',
+          type: 'string[]',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'string',
+          name: 'id',
+          type: 'string',
+        },
+      ],
+      name: 'getSchemaById',
+      outputs: [
+        {
+          internalType: 'string',
+          name: '',
+          type: 'string',
+        },
+        {
+          internalType: 'string',
+          name: '',
+          type: 'string',
+        },
+        {
+          internalType: 'string',
+          name: '',
+          type: 'string',
+        },
+        {
+          internalType: 'string',
+          name: '',
+          type: 'string',
+        },
+        {
+          internalType: 'address',
+          name: '',
+          type: 'address',
+        },
+        {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+  ],
+  USE_METAMASK: 'USE_METAMASK',
+});

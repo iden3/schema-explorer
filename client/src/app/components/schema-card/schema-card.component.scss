@@ -1,40 +1,38 @@
 .grid-container {
   margin: 1em;
+  min-height: 100%;
+  max-height: 100%;
 }
 
 .container {
   display: flex;
   flex-wrap: wrap;
+  flex-direction: column;
   gap: 1em;
 }
 
-.search {
+.detail {
   flex-grow: 1;
-  //max-height: 120px;
 }
 
 .search-full-width {
   width: 100%;
 }
-.search-button-row{
+.search-button-row {
   display: flex;
   justify-content: center;
 }
-.json {
-  flex-grow: 5;
-}
-.json, .search {
+
+.json,
+.detail {
   padding: 1em;
   border: 1px #ccc;
   border-radius: 3px;
   background: #fff;
 
   box-shadow: 0 2px 1px -1px #0003, 0 1px 1px #00000024, 0 1px 3px #0000001f;
-
 }
-
-:host mat-radio-button {
-  margin-right: 1em;
-  margin-bottom: 1em;
+.json {
+  flex-grow: 5;
+  padding: 0;
 }
-

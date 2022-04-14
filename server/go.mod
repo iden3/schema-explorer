@@ -1,10 +1,11 @@
-module github.com/iden3/go-schema-processor
+module github.com/iden3/go-schema-explorer
 
 go 1.17
 
 require (
 	github.com/ethereum/go-ethereum v1.10.15
 	github.com/gofiber/fiber/v2 v2.25.0
+	github.com/iden3/go-schema-processor v0.0.17
 	github.com/iden3/go-schema-registry-wrapper v0.0.7
 	github.com/ipfs/go-ipfs-api v0.3.0
 	github.com/pkg/errors v0.9.1
@@ -20,6 +21,9 @@ require (
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/iden3/go-iden3-core v0.0.12 // indirect
+	github.com/iden3/go-iden3-crypto v0.0.11 // indirect
+	github.com/iden3/go-merkletree-sql v1.0.0-pre8 // indirect
 	github.com/ipfs/go-cid v0.0.7 // indirect
 	github.com/ipfs/go-ipfs-files v0.0.9 // indirect
 	github.com/klauspost/compress v1.14.2 // indirect
