@@ -3,7 +3,7 @@
     <button mat-icon-button (click)="isExpanded = !isExpanded">
       <mat-icon>menu</mat-icon>
     </button>
-    <h1>Schema Uploader</h1>
+    <h1>Schema Explorer</h1>
   </div>
   <mat-button-toggle-group *ngIf="!isProd" [value]="isMetamask" (change)="modeChanged($event)">
     <mat-button-toggle [value]="false">Backend</mat-button-toggle>

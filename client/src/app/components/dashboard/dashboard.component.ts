@@ -109,8 +109,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         if (!value) {
           return schemas;
         }
-        return schemas.filter(s => s.id?.toLowerCase().includes(value) || s.desc?.toLowerCase().includes(value));
-      })
+        return schemas.filter(s => s.id?.toLowerCase().includes(value?.toLowerCase()) 
+            || s.desc?.toLowerCase().includes(value?.toLowerCase())  
+            || s.credentialType?.toLowerCase().includes(value?.toLowerCase()));
+        })
     );
   }
 

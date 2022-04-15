@@ -28,12 +28,25 @@ export class DashboardMetamaskService implements Dashboard {
   ) {
     this.ethereum = this.window['ethereum'];
     if (!this.ethereum) {
-      _snackBar.info('Metamask is not supported!');
-      throw new Error('Metamask is not supported!');
+      _snackBar.info('Metamask is not found, please install extension and connect to Mumbai polygon testnet !');
+      throw new Error('Metamask is not found!');
+    }else {
+      this.getChainId().then((chainId  =>{
+        // TODO:  when we will support other networks - change this!!!!!!!!
+        if (chainId != 80001) {
+          _snackBar.info('connect to Mumbai polygon testnet !');
+          throw new Error('connect to Mumbai polygon testnet ');
+        }
+      }))
     }
+
 
     this.ethereum.on('accountsChanged', (accounts: Array<string>) => this.handleAccountsChanged(accounts, true));
     this.contract = new new Web3(this.ethereum).eth.Contract(CONSTANTS.ABI_JSON, CONSTANTS.CONTRACT_ADDRESS);
+  }
+  
+  public async getChainId() : Promise<any> {
+    return await this.ethereum.request({ method: 'eth_chainId' });
   }
 
   registerSchema(schema: Schema): Observable<unknown> {

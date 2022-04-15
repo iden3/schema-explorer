@@ -1,7 +1,7 @@
 <mat-list>
   <mat-list-item (click)="navigate(s.id)" *ngFor="let s of schemas">
     <mat-icon mat-list-icon>schema</mat-icon>
-    <div mat-line>{{ s.desc }}</div>
+    <div mat-line>{{ s.credentialType }}</div>
     <div mat-line>{{ s.timestamp | date }}</div>
   </mat-list-item>
 </mat-list>
