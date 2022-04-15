@@ -42,6 +42,8 @@ export class DashboardMetamaskService implements Dashboard {
 
 
     this.ethereum.on('accountsChanged', (accounts: Array<string>) => this.handleAccountsChanged(accounts, true));
+    this.ethereum.on('chainChanged', (_chainId:any) => window.location.reload());
+
     this.contract = new new Web3(this.ethereum).eth.Contract(CONSTANTS.ABI_JSON, CONSTANTS.CONTRACT_ADDRESS);
   }
   
